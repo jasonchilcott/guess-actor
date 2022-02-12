@@ -5,7 +5,7 @@ import ActorPhoto from './ActorPhoto'
 class Main extends React.Component {
 
   state = {
-    
+    answer: "",
     actor: null
     
   }
@@ -16,7 +16,7 @@ class Main extends React.Component {
 
 
   fetchPhoto = () => {
-    let page = Math.floor(Math.random() * 49)
+    let page = Math.ceil(Math.random() * 24)
     //let actorIndex = Math.floor(Math.random() * 19)
     let url = 'https://api.themoviedb.org/3/person/popular?api_key=a3c8a67818b95d395055b1c64330a5d4&language=en-US&page=' + page
 
@@ -30,7 +30,7 @@ class Main extends React.Component {
 
   showPhoto = (obj) => {
     console.log(obj)
-    let actorIndex = Math.floor(Math.random() * 9)
+    let actorIndex = Math.ceil(Math.random() * 19)
     let actor = obj.results[actorIndex]
 
     console.log(obj.results[actorIndex])
@@ -50,8 +50,21 @@ class Main extends React.Component {
     this.setState({ [e.target.name]: e.target.value });
   };
 
+  plainStr = (str) => {
+    return str.normalize("NFD").replace(/\p{Diacritic}/gu, "").replace(/[^a-zA-Z ]/g, "").toLowerCase()
+  }
+
   answerHandler = (e) => {
     e.preventDefault();
+    let name = this.state.actor.name
+    let answer = e.target[0].value
+    console.log(this.plainStr(answer))
+    if (this.plainStr(answer) === this.plainStr(name)) {
+      console.log("correct")
+    } else {
+      console.log("wrong")
+    }
+    this.setState({answer: ""})
     this.fetchPhoto()
   }
 
