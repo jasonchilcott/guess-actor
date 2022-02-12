@@ -1,4 +1,5 @@
 import React from 'react';
+import FuzzySet from 'fuzzyset'
 import ActorPhoto from './ActorPhoto'
 
 
@@ -27,11 +28,11 @@ class Main extends React.Component {
       .then((resp) => resp.json())
         .then((
           peopleObj 
-        ) => this.showPhoto(peopleObj)
+        ) => this.fetchActor(peopleObj)
       )
   }
 
-  showPhoto = (obj) => {
+  fetchActor = (obj) => {
     console.log(obj)
     let actorIndex = Math.ceil(Math.random() * 19)
     let actor = obj.results[actorIndex]
@@ -40,13 +41,25 @@ class Main extends React.Component {
     
 
     if ( actor.known_for_department === "Acting" && actor.profile_path ) {
-      this.setState({
-        actor: actor
-      })
-      //return 'https://image.tmdb.org/t/p/original/' + obj[actorIndex].profile_path
+      let url = `https://api.themoviedb.org/3/person/${actor.id}?api_key=a3c8a67818b95d395055b1c64330a5d4&language=en-US`
+      fetch ( url ) 
+        .then((resp) => resp.json())
+          .then((
+            actorObj 
+          ) => this.setActor(actorObj)
+        )
+      
     } else {
-      this.showPhoto(obj)
+      this.fetchActor(obj)
     } 
+    
+
+  }
+
+  setActor = (obj) => {
+    console.log(obj)
+    this.setState({actor: obj})
+    
   }
 
   changeHandler = (e) => {
@@ -59,14 +72,23 @@ class Main extends React.Component {
 
   answerHandler = (e) => {
     e.preventDefault();
-    let name = this.state.actor.name
+    let actor = this.state.actor
+    let aka = actor.also_known_as.map(name => this.plainStr(name))
     let answer = e.target[0].value
-    console.log(this.plainStr(answer))
-    if (this.plainStr(answer) === this.plainStr(name)) {
-      this.setState(prevState => {
-        return {correct: prevState.correct + 1}
-      })
-    } else {
+    let fuzzy = FuzzySet()
+    fuzzy.add(this.plainStr(actor.name))
+    aka.forEach(name => fuzzy.add(name))
+    console.log(fuzzy.get(this.plainStr(answer)))
+    let guess = fuzzy.get(this.plainStr(answer))
+    const close = (name) => {
+      return (name[0] > 0.8)
+    }
+
+    if (guess && guess.some(close)) {
+        this.setState(prevState => {
+          return {correct: prevState.correct + 1}
+        })
+      } else {
       this.setState(prevState => {
         return {incorrect: prevState.incorrect + 1}
       })
