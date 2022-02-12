@@ -6,7 +6,10 @@ class Main extends React.Component {
 
   state = {
     answer: "",
-    actor: null
+    actor: null,
+    correct: 0,
+    incorrect: 0,
+    total:0
     
   }
 
@@ -60,10 +63,17 @@ class Main extends React.Component {
     let answer = e.target[0].value
     console.log(this.plainStr(answer))
     if (this.plainStr(answer) === this.plainStr(name)) {
-      console.log("correct")
+      this.setState(prevState => {
+        return {correct: prevState.correct + 1}
+      })
     } else {
-      console.log("wrong")
+      this.setState(prevState => {
+        return {incorrect: prevState.incorrect + 1}
+      })
     }
+    this.setState(prevState => {
+      return {total: prevState.total + 1}
+    })
     this.setState({answer: ""})
     this.fetchPhoto()
   }
@@ -76,23 +86,23 @@ class Main extends React.Component {
       <>
       {this.state.actor ? <ActorPhoto actor={this.state.actor} /> : null}
         <div className="answer">
-
-<form onSubmit={this.answerHandler} >
-  <input
-    className="form-control"
-    type="text"
-    name="answer"
-    placeholder="Name"
-    value={this.state.answer}
-    onChange={this.changeHandler}
-  />
-  <button type="submit">Submit</button>
-</form>
-        
+          <form onSubmit={this.answerHandler} >
+            <input
+              className="form-control"
+              type="text"
+              name="answer"
+              placeholder="Name"
+              value={this.state.answer}
+              onChange={this.changeHandler}
+            />
+            <button type="submit">Submit</button>
+          </form>
         </div>
+        <div className='score'>
+          <p>Correct: {this.state.correct}</p>
+          <p>Incorrect: {this.state.incorrect}</p>
 
-
-        
+        </div>
       </>
     );
   }
