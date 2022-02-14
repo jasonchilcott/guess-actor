@@ -1,8 +1,7 @@
 
 body {
   margin: 0;
-  font-family: 'Helvetica Now', 'Helvetica Neue', 'Helvetica','Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 
+  font-family: 'Helvetica Now', 'Helvetica Neue', 'Helvetica', 'Arial' 
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
