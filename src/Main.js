@@ -9,7 +9,8 @@ class Main extends React.Component {
     correct: 0,
     incorrect: 0,
     total: 0,
-    previous: []
+    previous: [],
+    correctAnswer: " "
   };
 
   componentDidMount() {
@@ -88,9 +89,11 @@ class Main extends React.Component {
     this.setState((prevState) => {
       return { total: prevState.total + 1 };
     });
+    this.setState({ correctAnswer: actor.name });
     this.setState({ previous: [...this.state.previous, actor.id] })
-    this.setState({ answer: "" });
-    this.fetchPhoto();
+    this.setState({ answer: " " });
+    setTimeout(() => {this.setState({ correctAnswer: " " })}, 2000)
+    setTimeout(() => {this.fetchPhoto()}, 2000);
   };
 
   render() {
@@ -109,6 +112,9 @@ class Main extends React.Component {
             />
             <button type="submit">Submit</button>
           </form>
+        </div>
+        <div className='correct-answer'>
+          <p>{this.state.correctAnswer}</p>
         </div>
         <div className="score">
           <p>Correct: {this.state.correct}</p>
